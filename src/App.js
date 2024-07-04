@@ -229,7 +229,7 @@ function Post({ posts }) {
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
-      <img src={`./images/${posts}`} alt="content" />
+      <img src={`${process.env.PUBLIC_URL}/images/${posts}`} alt="content" />
 
       <div className="hovered-post" style={isHover ? { display: "block" } : {}}>
         <div className="black-fade"></div>
@@ -295,6 +295,7 @@ function Create({ isActive }) {
       setDrafts((prev) => [
         ...prev,
         {
+          id: Date.now(),
           image: reader.result,
           title: details.title,
           description: details.description,
@@ -430,7 +431,7 @@ function Create({ isActive }) {
               className={`draft ${
                 i === currentDraftIndex ? "active-draft" : ""
               } `}
-              key={draft.title}
+              key={draft.id}
               onClick={() => handleClickDraft(i)}
             >
               <Draft image={draft.image} title={draft.title} alt={i} />
