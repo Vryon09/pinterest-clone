@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/pinterest-clone/static/css/main.646006ec.css",
-    "main.js": "/pinterest-clone/static/js/main.f3f1deec.js",
+    "main.css": "/pinterest-clone/static/css/main.55903e9c.css",
+    "main.js": "/pinterest-clone/static/js/main.79ed3f23.js",
     "static/media/pinterest-logo.svg": "/pinterest-clone/static/media/pinterest-logo.1682a9e87b2024589a79ce01022d7c68.svg",
     "index.html": "/pinterest-clone/index.html",
-    "main.646006ec.css.map": "/pinterest-clone/static/css/main.646006ec.css.map",
-    "main.f3f1deec.js.map": "/pinterest-clone/static/js/main.f3f1deec.js.map"
+    "main.55903e9c.css.map": "/pinterest-clone/static/css/main.55903e9c.css.map",
+    "main.79ed3f23.js.map": "/pinterest-clone/static/js/main.79ed3f23.js.map"
   },
   "entrypoints": [
-    "static/css/main.646006ec.css",
-    "static/js/main.f3f1deec.js"
+    "static/css/main.55903e9c.css",
+    "static/js/main.79ed3f23.js"
   ]
 }
