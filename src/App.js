@@ -11,6 +11,8 @@ import {
   faPlus,
   faCircleUp,
   faAnglesLeft,
+  faTrash,
+  faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
@@ -262,6 +264,7 @@ function Create({ isActive }) {
   const [drafts, setDrafts] = useState([]);
   const [isBoardsMenuActive, setIsBoardsMenuActive] = useState(false);
   const [currentDraftIndex, setCurrentDraftIndex] = useState(null);
+  const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
 
   function handleDetails(e) {
     const { name, value } = e.target;
@@ -302,6 +305,7 @@ function Create({ isActive }) {
           link: details.link,
           board: details.board,
           tags: details.tags,
+          checked: false,
         },
       ]);
       setCurrentDraftIndex(drafts.length);
@@ -339,6 +343,47 @@ function Create({ isActive }) {
     setSelectedFile(selectedDraft.image);
     setDisabled(false);
   }
+
+  function handleChecked(id, e) {
+    handleIsChecked(e);
+
+    setDrafts((prevCards) =>
+      prevCards.map((card) =>
+        card.id === id ? { ...card, checked: !card.checked } : card
+      )
+    );
+  }
+
+  const numCheckedItems = drafts.filter((draft) => draft.checked).length;
+
+  function handleSelectAll(e) {
+    setIsSelectAllChecked(e.target.checked);
+    if (!isSelectAllChecked) {
+      setDrafts((prevDrafts) =>
+        prevDrafts.map((draft) => {
+          return { ...draft, checked: true };
+        })
+      );
+    }
+
+    if (isSelectAllChecked) {
+      setDrafts((prevDrafts) =>
+        prevDrafts.map((draft) => {
+          return { ...draft, checked: false };
+        })
+      );
+    }
+  }
+
+  function handleIsChecked(e) {
+    if ((numCheckedItems > 1 || numCheckedItems === 0) && e.target.checked)
+      setIsSelectAllChecked(true);
+
+    if (numCheckedItems === 1 && !e.target.checked)
+      setIsSelectAllChecked(false);
+  }
+
+  //If there is no checked draft, the select all checkbox should be unchecked
 
   return (
     <div
@@ -424,7 +469,13 @@ function Create({ isActive }) {
         </div>
         <div
           className="drafts-container"
-          style={!isBoardsMenuActive ? { display: "none" } : {}}
+          style={
+            !isBoardsMenuActive
+              ? { display: "none" }
+              : drafts.length < 4
+              ? { justifyContent: "flex-end" }
+              : {}
+          }
         >
           {drafts.map((draft, i) => (
             <div
@@ -434,9 +485,59 @@ function Create({ isActive }) {
               key={draft.id}
               onClick={() => handleClickDraft(i)}
             >
-              <Draft image={draft.image} title={draft.title} alt={i} />
+              <Draft
+                id={draft.id}
+                checked={draft.checked}
+                onHandleChecked={handleChecked}
+                image={draft.image}
+                title={draft.title}
+                alt={i}
+                drafts={drafts}
+              />
             </div>
           ))}
+        </div>
+
+        <div
+          className="board-select"
+          style={
+            !isBoardsMenuActive || drafts.length < 2 ? { display: "none" } : {}
+          }
+        >
+          <div className="board-select-actions">
+            <div
+              className={`${
+                numCheckedItems === drafts.length
+                  ? "selected-all"
+                  : "select-all-checkbox"
+              }`}
+            >
+              <input
+                className={`select-all-input `}
+                type="checkbox"
+                checked={isSelectAllChecked}
+                onChange={handleSelectAll}
+              />
+              {numCheckedItems === 0 ? (
+                <p>Select all</p>
+              ) : (
+                <p>
+                  {numCheckedItems} of {drafts.length}
+                </p>
+              )}
+            </div>
+            {drafts.some((draft) => draft.checked === true) && (
+              <div className="selected-actions">
+                <button>
+                  <FontAwesomeIcon icon={faTrash} size="lg" />
+                </button>
+                <button>
+                  <FontAwesomeIcon icon={faPen} size="lg" />
+                </button>
+                <button>Publish</button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -453,10 +554,17 @@ function Create({ isActive }) {
 }
 
 //The draft should set after uploading a photo or a file, and somehow the input and the draft is connected
-function Draft({ image, title }) {
+function Draft({ id, checked, onHandleChecked, image, title, drafts }) {
   return (
     <>
-      <div>
+      {drafts.length > 1 && (
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => onHandleChecked(id, e)}
+        />
+      )}
+      <div className="draft-image">
         <img src={image} alt={title} />
       </div>
       <div>
@@ -465,6 +573,9 @@ function Draft({ image, title }) {
           30 days until expiration
         </p>
       </div>
+      <button className="draft-ellipsis-button">
+        <FontAwesomeIcon icon={faEllipsis} size="xl" />
+      </button>
     </>
   );
 }
